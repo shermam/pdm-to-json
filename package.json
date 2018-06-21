@@ -1,0 +1,27 @@
+{
+  "name": "pdm-to-json",
+  "version": "1.0.0",
+  "description": "Converts pdm files to JSON objects",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shermam/pdm-to-json.git"
+  },
+  "keywords": [
+    "pdm",
+    "json",
+    "powerdesigner"
+  ],
+  "author": "Shermam Miranda (shermam.miranda@hotmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shermam/pdm-to-json/issues"
+  },
+  "homepage": "https://github.com/shermam/pdm-to-json#readme",
+  "dependencies": {
+    "xml2js": "^0.4.19"
+  }
+}
