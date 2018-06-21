@@ -7,6 +7,10 @@ const readFile = util.promisify(fs.readFile);
 const parseString = util.promisify(parser.parseString);
 
 module.exports = function (fileName) {
+
+    console.log("NEW PACKAGE");
+
+
     return readFile(fileName, 'utf8')
         .then(parseString)
         .then(getPdmInfo)
