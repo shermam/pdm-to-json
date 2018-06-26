@@ -1,0 +1,66 @@
+{
+  "Model": {
+    "o:RootObject": [
+      {
+        "c:Children": [
+          {
+            "o:Model": [
+              {
+                "a:Name": [
+                  "string"
+                ],
+                "a:Code": [
+                  "string"
+                ],
+                "a:Comment": [
+                  "multiLineString"
+                ],
+                "a:Description": [
+                  "rtfString"
+                ],
+                "c:DBMS": [
+                  {
+                    "o:Shortcut": [
+                      {
+                        "a:Name": [
+                          "string"
+                        ],
+                        "a:Code": [
+                          "string"
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "c:Tables": [
+                  {
+                    "o:Table": [
+                      {
+                        "$": {
+                          "Id": "string"
+                        },
+                        "a:Name": [
+                          "string"
+                        ],
+                        "a:Code": [
+                          "string"
+                        ],
+                        "a:Comment": [
+                          "string"
+                        ],
+                        "a:Description": [
+                          "rtfString"
+                        ]
+                      },
+                      {}
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

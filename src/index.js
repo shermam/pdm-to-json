@@ -1,3 +1,5 @@
+//https://www.npmjs.com/package/@iarna/rtf-to-html
+
 const removeDiacritics = require('./removeDiacritics');
 const util = require('util');
 const parser = require('xml2js');
@@ -7,9 +9,6 @@ const readFile = util.promisify(fs.readFile);
 const parseString = util.promisify(parser.parseString);
 
 module.exports = function (fileName) {
-
-    console.log("NEW PACKAGE");
-
 
     return readFile(fileName, 'utf8')
         .then(parseString)
