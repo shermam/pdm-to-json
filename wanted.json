@@ -50,9 +50,167 @@
                         ],
                         "a:Description": [
                           "rtfString"
+                        ],
+                        "c:Columns": [
+                          {
+                            "o:Column": [
+                              {
+                                "$": {
+                                  "Id": "string"
+                                },
+                                "a:Name": [
+                                  "code"
+                                ],
+                                "a:Code": [
+                                  "string"
+                                ],
+                                "a:DataType": [
+                                  "string"
+                                ],
+                                "a:Identity": [
+                                  "string 0/1"
+                                ],
+                                "a:Mandatory": [
+                                  "string 0/1"
+                                ],
+                                "a:Description": [
+                                  "rtfString"
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "c:Keys": [
+                          {
+                            "o:Key": [
+                              {
+                                "$": {
+                                  "Id": "string"
+                                },
+                                "a:Name": [
+                                  "string"
+                                ],
+                                "a:Code": [
+                                  "string"
+                                ],
+                                "c:Key.Columns": [
+                                  {
+                                    "o:Column": [
+                                      {
+                                        "$": {
+                                          "Ref": "string"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "c:PrimaryKey": [
+                          {
+                            "o:Key": [
+                              {
+                                "$": {
+                                  "Ref": "string"
+                                }
+                              }
+                            ]
+                          }
                         ]
                       },
                       {}
+                    ]
+                  }
+                ],
+                "c:References": [
+                  {
+                    "o:Reference": [
+                      {
+                        "$": {
+                          "Id": "string"
+                        },
+                        "a:Name": [
+                          "string"
+                        ],
+                        "a:Code": [
+                          "string"
+                        ],
+                        "a:Cardinality": [
+                          "0..*"
+                        ],
+                        "a:UpdateConstraint": [
+                          "1"
+                        ],
+                        "a:DeleteConstraint": [
+                          "1"
+                        ],
+                        "a:ImplementationType": [
+                          "T"
+                        ],
+                        "a:ParentRole": [
+                          "tem volume armazenado calculado segundo"
+                        ],
+                        "a:ChildRole": [
+                          "é usada para cálculo do volume armazenado em"
+                        ],
+                        "c:ParentTable": [
+                          {
+                            "o:Table": [
+                              {
+                                "$": {
+                                  "Ref": "o843"
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "c:ChildTable": [
+                          {
+                            "o:Table": [
+                              {
+                                "$": {
+                                  "Ref": "o857"
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "c:Joins": [
+                          {
+                            "o:ReferenceJoin": [
+                              {
+                                "$": {
+                                  "Id": "o3153"
+                                },
+                                "c:Object1": [
+                                  {
+                                    "o:Column": [
+                                      {
+                                        "$": {
+                                          "Ref": "o1618"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ],
+                                "c:Object2": [
+                                  {
+                                    "o:Column": [
+                                      {
+                                        "$": {
+                                          "Ref": "o894"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
                     ]
                   }
                 ]

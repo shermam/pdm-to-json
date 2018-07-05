@@ -1,0 +1,81 @@
+// model = root['Model']['o:RootObject'][0]['c:Children][0]['o:Model'][0]
+// codify = Method to remove spaces and diacritics
+// rtfToHtml = Method to convert RTF to HTML
+// findColumnByRef = Method to find a column obj in a table by the ref property
+// findTableByRef = Method to find a table obj in the model by the ref property
+{
+    "table_code": {
+        // table = model['c:Tables'][0]['o:Table'][n]
+        // primaryKeyArray = table["c:PrimaryKey"][0]["o:Key"]
+        "ref": "table['$']['id']",
+        "name": "table['a:Name'][0] | codify",
+        "code": "table['a:Code'][0]",
+        "conceptualName": "table['a:Name'][0]",
+        "comment": "table['a:Comment']",
+        "description": "table['a:Description'] | rtfToHtml",
+        "columns": [
+            // column = table["c:Columns"][0]["o:Column"][n]
+            {
+                "ref": "column['$']['id']",
+                "name": "column['a:Name'][0] | codify",
+                "code": "column['a:Code'][0]",
+                "conceptualName": "column['a:Name'][0]",
+                "description": "column['a:Description'][0] | rtfToHtml",
+                "dataType": "column['a:DataType'][0]",
+                "isIdentity": "!!Number(column['a:Identity'][0])",
+                "isMandatory": "!!Number(column['a:Mandatory'][0])",
+                "isPrimaryKey": "primaryKeyArray.find(k => k['$']['Ref'] === column.ref)"
+            }
+        ],
+        "keys": [
+            // key = table["c:Keys"][0]["o:Key"][n]
+            {
+                "name": "key['a:Name']",
+                "code": "key['a:Code']",
+                "columns": [
+                    // column = findColumnByRef(table, key['c:Key.Columns'][0]['o:Column'][n]['$']['Ref'])
+                    {
+                        "name": "column['name']",
+                        "code": "column['code']",
+                        "conceptualName": "column['conceptualName']"
+                    }
+                ]
+            }
+        ],
+        "inRelations": [
+            // references = model['c:References'][0]['o:Reference'].filter(r => r['c:ChildTable'][0]['o:Table'][0]['$']['Ref'] === table.ref)
+            // parentTable = findTableByRef(references[n]['c:ParentTable'][0]['o:Table'][0]['$']['Ref'])
+            // parentColumnRef = references[n]['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object1'][0]['o:Column'][0]['$']['Ref']
+            // childColumnRef = references[n]['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object2'][0]['o:Column'][0]['$']['Ref']
+            {
+                "name": "references[n]['a:Name'][0]",
+                "code": "references[n]['a:Code'][0]",
+                "cardinality": "references[n]['a:Cardinality'][0]",
+                "parentRole": "references[n]['a:ParentRole'][0]",
+                "childRole": "references[n]['a:ChildRole'][0]",
+                "parentTable": "parentTable.conceptualName",
+                "parentColumn": "findColumnByRef(parentTable, parentColumnRef)",
+                "childTable": "table.conceptualName",
+                "childColumn": "findColumnByRef(table, childColumnRef)"
+            }
+        ],
+        "outRelations": [
+            // references = model['c:References'][0]['o:Reference'].filter(r => r['c:ParentTable'][0]['o:Table'][0]['$']['Ref'] === table.ref)
+            // childTable = findTableByRef(references[n]['c:ChildTable'][0]['o:Table'][0]['$']['Ref'])
+            // TODO - Verificar se esse mapeamento está correto
+            // parentColumnRef = references[n]['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object1'][0]['o:Column'][0]['$']['Ref']
+            // childColumnRef = references[n]['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object2'][0]['o:Column'][0]['$']['Ref']
+            {
+                "name": "references[n]['a:Name'][0]",
+                "code": "references[n]['a:Code'][0]",
+                "cardinality": "references[n]['a:Cardinality'][0]",
+                "parentRole": "references[n]['a:ParentRole'][0]",
+                "childRole": "references[n]['a:ChildRole'][0]",
+                "parentTable": "table.conceptualName",
+                "parentColumn": "findColumnByRef(table, parentColumnRef)",
+                "childTable": "childTable.conceptualName",
+                "childColumn": "findColumnByRef(childTable, childColumnRef)"
+            }
+        ]
+    }
+}
