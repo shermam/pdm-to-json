@@ -30,6 +30,7 @@
         "keys": [
             // key = table["c:Keys"][0]["o:Key"][n]
             {
+                "ref": "key['$']['Id']",
                 "name": "key['a:Name']",
                 "code": "key['a:Code']",
                 "columns": [

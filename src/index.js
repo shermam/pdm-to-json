@@ -1,4 +1,4 @@
-//https://www.npmjs.com/package/@iarna/rtf-to-html
+
 
 const removeDiacritics = require('./removeDiacritics');
 const util = require('util');
@@ -23,33 +23,118 @@ async function getPdmInfo(parsedJson) {
     const parsedModel = {};
 
     for (const table of tables) {
-        const ref = table['$']['id'];
+        const ref = table['$']['Id'];
         const name = codify(table['a:Name'][0]);
         const code = table['a:Code'][0];
         const conceptualName = table['a:Name'][0];
         const comment = table['a:Comment'];
         const description = await rtfToHTML(table['a:Description']);
         const primaryKeyArray = table["c:PrimaryKey"][0]["o:Key"];
-        const columns = await Promise.all(table["c:Columns"][0]["o:Column"].map(async column => {
-            return {
-                ref: column['$']['id'],
-                name: codify(column['a:Name'][0]),
-                code: column['a:Code'][0],
-                conceptualName: column['a:Name'][0],
-                description: await rtfToHTML(column['a:Description']),
-                dataType: column['a:DataType'][0],
-                isIdentity: !!Number(column['a:Identity']),
-                isMandatory: !!Number(column['a:Mandatory']),
-                isPrimaryKey: !!primaryKeyArray.find(k => k['$']['Ref'] === column['$']['id'])
-            }
-        }));
+        const columns = await getColumns(table);
+        const keys = getKeys(table, primaryKeyArray, columns);
 
         parsedModel[code] = {
-            ref, name, code, conceptualName, comment, description, columns
+            ref,
+            name,
+            code,
+            conceptualName,
+            comment,
+            description,
+            columns,
+            keys
         };
     }
 
+    for (const tableCode in parsedModel) {
+        const table = parsedModel[tableCode];
+        table.inRelations = [];
+        table.outRelations = [];
+        const inReferences = model['c:References'][0]['o:Reference'].filter(r => r['c:ChildTable'][0]['o:Table'][0]['$']['Ref'] === table.ref);
+        const outReferences = model['c:References'][0]['o:Reference'].filter(r => r['c:ParentTable'][0]['o:Table'][0]['$']['Ref'] === table.ref);
+
+        mapInRelations(inReferences, parsedModel, table);
+        mapOutRelations(outReferences, parsedModel, table);
+
+    }
+
     return parsedModel;
+}
+
+function mapInRelations(inReferences, parsedModel, table) {
+    for (const reference of inReferences) {
+        const parentTable = findTableByRef(parsedModel, reference['c:ParentTable'][0]['o:Table'][0]['$']['Ref']);
+        const parentColumnRef = reference['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object1'][0]['o:Column'][0]['$']['Ref'];
+        const childColumnRef = reference['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object2'][0]['o:Column'][0]['$']['Ref'];
+        table.inRelations.push({
+            name: reference['a:Name'][0],
+            code: reference['a:Code'][0],
+            cardinality: reference['a:Cardinality'][0],
+            parentRole: reference['a:ParentRole'][0],
+            childRole: reference['a:ChildRole'][0],
+            parentTable: parentTable.conceptualName,
+            parentColumn: findColumnByRef(parentTable, parentColumnRef)['conceptualName'],
+            childTable: table.conceptualName,
+            childColumn: findColumnByRef(table, childColumnRef)['conceptualName']
+        });
+    }
+}
+
+function mapOutRelations(outReferences, parsedModel, table) {
+    for (const reference of outReferences) {
+        const childTable = findTableByRef(parsedModel, reference['c:ChildTable'][0]['o:Table'][0]['$']['Ref']);
+        const parentColumnRef = reference['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object1'][0]['o:Column'][0]['$']['Ref'];
+        const childColumnRef = reference['c:Joins'][0]['o:ReferenceJoin'][0]['c:Object2'][0]['o:Column'][0]['$']['Ref'];
+        table.outRelations.push({
+            name: reference['a:Name'][0],
+            code: reference['a:Code'][0],
+            cardinality: reference['a:Cardinality'][0],
+            parentRole: reference['a:ParentRole'][0],
+            childRole: reference['a:ChildRole'][0],
+            parentTable: table.conceptualName,
+            parentColumn: findColumnByRef(table, parentColumnRef)['conceptualName'],
+            childTable: childTable.conceptualName,
+            childColumn: findColumnByRef(childTable, childColumnRef)['conceptualName']
+        });
+    }
+}
+
+function getKeys(table, primaryKeyArray, columns) {
+    return table["c:Keys"][0]["o:Key"].map(key => {
+        const ref = key['$']['Id'];
+        const name = key['a:Name'][0];
+        const code = key['a:Code'][0];
+        const isPrimaryKey = !!primaryKeyArray.find(k => k['$']['Ref'] == key['$']['Id']);
+        const columnsKey = getColumnsKey(key, columns, isPrimaryKey);
+        return { ref, name, code, isPrimaryKey, columnsKey };
+    });
+}
+
+function getColumnsKey(key, columns, isPrimaryKey) {
+    return key['c:Key.Columns'][0]['o:Column'].map(cKey => {
+        const column = columns.find(c => c.ref === cKey['$']['Ref']);
+        column.isPrimaryKey = isPrimaryKey;
+        return {
+            name: column.name,
+            code: column.code,
+            conceptualName: column.conceptualName
+        };
+    });
+}
+
+async function getColumns(table) {
+    return await Promise.all(table["c:Columns"][0]["o:Column"].map(async (column) => {
+        return {
+            ref: column['$']['Id'],
+            name: codify(column['a:Name'][0]),
+            code: column['a:Code'][0],
+            conceptualName: column['a:Name'][0],
+            description: await rtfToHTML(column['a:Description']),
+            dataType: column['a:DataType'][0],
+            isIdentity: column['a:Identity'] ? !!Number(column['a:Identity'][0]) : false,
+            isMandatory: column['a:Column.Mandatory'] ? !!Number(column['a:Column.Mandatory'][0]) : false,
+            isPrimaryKey: false
+        };
+    }));
 }
 
 async function rtfToHTML(arr) {
