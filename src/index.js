@@ -130,7 +130,11 @@ async function getColumns(table) {
             dataType: column['a:DataType'][0],
             isIdentity: column['a:Identity'] ? !!Number(column['a:Identity'][0]) : false,
             isMandatory: column['a:Column.Mandatory'] ? !!Number(column['a:Column.Mandatory'][0]) : false,
-            isPrimaryKey: false
+            isPrimaryKey: false,
+            length: column['a:Length'] && column['a:Length'].length ? column['a:Length'][0] : null,
+            listOfValues: column['a:ListOfValues'] && column['a:ListOfValues'].length ? column['a:ListOfValues'][0] : null,
+            precision: column['a:Precision'] && column['a:Precision'].length ? column['a:Precision'][0] : null,
+            defaultValue: column['a:DefaultValue'] && column['a:DefaultValue'].length ? column['a:DefaultValue'][0] : null
         };
     }));
 }

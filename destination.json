@@ -24,7 +24,11 @@
                 "dataType": "column['a:DataType'][0]",
                 "isIdentity": "!!Number(column['a:Identity'][0])",
                 "isMandatory": "!!Number(column['a:Mandatory'][0])",
-                "isPrimaryKey": "primaryKeyArray.find(k => k['$']['Ref'] === column.ref)"
+                "isPrimaryKey": "primaryKeyArray.find(k => k['$']['Ref'] === column.ref)",
+                "length": "column['a:Length'] && column['a:Length'].length ? column['a:Length'][0] : null",
+                "listOfValues": "column['a:ListOfValues'] && column['a:ListOfValues'].length ? column['a:ListOfValues'][0] : null",
+                "precision": "column['a:Precision'] && column['a:Precision'].length ? column['a:Precision'][0] : null",
+                "defaultValue": "column['a:DefaultValue'] && column['a:DefaultValue'].length ? column['a:DefaultValue'][0] : null"
             }
         ],
         "keys": [
