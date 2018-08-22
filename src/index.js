@@ -24,6 +24,7 @@ async function getPdmInfo(parsedJson) {
         const ref = table['$']['Id'];
         const name = codify(table['a:Name'][0]);
         const code = table['a:Code'][0];
+        const constantName = codifyUpper(table['a:Name'][0]);
         const conceptualName = table['a:Name'][0];
         const comment = table['a:Comment'];
         const description = await rtfToHTML(table['a:Description']);
@@ -35,6 +36,7 @@ async function getPdmInfo(parsedJson) {
             ref,
             name,
             code,
+            constantName,
             conceptualName,
             comment,
             description,
@@ -125,6 +127,7 @@ async function getColumns(table) {
             ref: column['$']['Id'],
             name: codify(column['a:Name'][0]),
             code: column['a:Code'][0],
+            constantName: codifyUpper(column['a:Name'][0]),
             conceptualName: column['a:Name'][0],
             description: await rtfToHTML(column['a:Description']),
             dataType: column['a:DataType'][0],
@@ -132,7 +135,7 @@ async function getColumns(table) {
             isMandatory: column['a:Column.Mandatory'] ? !!Number(column['a:Column.Mandatory'][0]) : false,
             isPrimaryKey: false,
             length: column['a:Length'] && column['a:Length'].length ? column['a:Length'][0] : null,
-            listOfValues: column['a:ListOfValues'] && column['a:ListOfValues'].length ? column['a:ListOfValues'][0] : null,
+            listOfValues: column['a:ListOfValues'] && column['a:ListOfValues'].length ? extractListOfValues(column['a:ListOfValues'][0]) : null,
             precision: column['a:Precision'] && column['a:Precision'].length ? column['a:Precision'][0] : null,
             defaultValue: column['a:DefaultValue'] && column['a:DefaultValue'].length ? column['a:DefaultValue'][0] : null
         };
@@ -152,6 +155,28 @@ async function rtfToHTML(arr) {
 function codify(str) {
     return removeDiacritics(str)
         .replace(/ /g, "")
+        .replace(/\W/g, "");
+}
+
+function extractListOfValues(str) {
+    return str.split('\r\n').map(s => {
+        const elements = s.split('\t');
+        const obj = {};
+        obj.code = elements[0];
+        obj.name = elements[1];
+        obj.constantName = removeDiacritics(elements[1])
+            .toUpperCase()
+            .replace(/ /g, "_")
+            .replace(/\W/g, "");
+
+        return obj;
+    });
+}
+
+function codifyUpper(str) {
+    return removeDiacritics(str)
+        .toUpperCase()
+        .replace(/ /g, "_")
         .replace(/\W/g, "");
 }
 

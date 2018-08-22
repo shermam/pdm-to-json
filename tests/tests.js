@@ -9,7 +9,7 @@ const rtfText2 = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1046{\\f
 pdmToJson("tests/Posto Fácil.pdm")
     .then(response => {
         console.log("The response has been writen");
-        write("pdm.json", JSON.stringify(response, null, "  "));
+        write("tests/pdm.json", JSON.stringify(response, null, "  "));
     });
 
 // rtfToHTML.fromString(rtfText2, (err, html) => {
